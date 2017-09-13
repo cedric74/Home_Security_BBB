@@ -14,6 +14,13 @@
 #include "Lib_socket.h"
 
 /*******************************************
+*               D E F I N E                *
+********************************************/
+#define MODULE_NAME		"socket\0"
+
+#define SIZE_MAX_BUFFER		255
+
+/*******************************************
 *	          F U N C T I O N S            *
 ********************************************/
 /*
@@ -181,5 +188,123 @@ void send_binary(int newsockfd, const char *file_name)
 
     fclose(pFile);
 }
+
+
+
+/*
+============================================
+Function     : Socket_Com_Create
+Parameter    :
+Return Value :
+Description  :
+============================================
+*/
+int Socket_Com_Create_Udp(unsigned char u8Type, unsigned char bDirection, const char* pHostAddress, int iPort, struct sockaddr_in *pServ_Adrr)
+{
+	// Declarations Variables
+    int rc;
+    int sockfd=0;
+
+    /* create the socket */
+    sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);  //AF_UNIX, AF_INET (TCP: SOCK_STREAM)  (UDP: SOCK_DGRAM)
+    if (sockfd < 0){
+    	printf("\n%s, Error: opening socket \n", MODULE_NAME);
+        return 0;
+    }
+    printf("\n%s, Create Socket OK\n", MODULE_NAME);
+
+
+    /* fill in the structure */
+    memset(pServ_Adrr,0,sizeof(struct sockaddr_in));
+    pServ_Adrr->sin_family=AF_INET;
+    pServ_Adrr->sin_port = htons(iPort);
+
+    // Check if Client or Server
+    if(bDirection == SERVER_SOCKET){
+    	// Server Socket
+        pServ_Adrr->sin_addr.s_addr = htonl(INADDR_ANY);
+
+        rc = bind(sockfd, (struct sockaddr *)pServ_Adrr, sizeof(struct sockaddr_in));
+        if (rc == -1)
+        {
+        	printf("\n%s, Error: bind \n", MODULE_NAME);
+            close(sockfd);
+            return 0;
+        }
+		printf("\n%s, Bind  Socket OK\n", MODULE_NAME);
+
+    }else{
+    	// Client Socket
+    	if (inet_aton(pHostAddress, &pServ_Adrr->sin_addr) == 0)
+    	{
+    		printf("\n%s, Error: Inet_Aton \n", MODULE_NAME);
+    		close(sockfd);
+    		return 0;
+    	}
+	}
+	return sockfd;
+}
+
+
+/*
+============================================
+Function     : Socket_Com_Send_Udp
+Parameter    :
+Return Value :
+Description  :
+============================================
+*/
+int  Socket_Com_Send_Udp(int iSock, char * pMsg, int iSize, struct sockaddr_in *pServ_Adrr){
+    int iTotalByte = 0;
+    int iSlen = sizeof(struct sockaddr_in);
+
+	 //send the message
+    iTotalByte= sendto(iSock, pMsg, iSize, 0 , (struct sockaddr *) pServ_Adrr, iSlen);
+	if(iTotalByte <=0 || (iTotalByte =! iSize)){
+		printf("%s, Error send message", MODULE_NAME);
+    	return iTotalByte;
+	}
+	return iTotalByte;
+}
+
+
+/*
+============================================
+Function     : Socket_Com_Receive_Udp
+Parameter    :
+Return Value :
+Description  :
+============================================
+*/
+int  Socket_Com_Receive_Udp(int iSock, char * pMsg, int iSize){
+	int iTotalByte = 0;
+	struct sockaddr_in  si_other;
+	int iSlen= sizeof(si_other);
+
+	// Blocking Call
+    iTotalByte = recvfrom(iSock, (char*)pMsg, iSize, 0, (struct sockaddr* )&si_other, &iSlen);
+    if((iTotalByte < 0)||(iTotalByte >= SIZE_MAX_BUFFER)){
+    	iTotalByte =0;
+	}
+	pMsg[iTotalByte]='\0';
+	printf("\n%s, Recv: %s , Total Bytes: %d\n", MODULE_NAME, pMsg, iTotalByte);
+
+	return iTotalByte;
+}
+
+/*
+============================================
+Function     : Socket_Com_Close
+Parameter    :
+Return Value :
+Description  :
+============================================
+*/
+void Socket_Com_Close(int iSocket){
+	/* close the socket */
+	close(iSocket);
+}
+
+
 
 

@@ -34,7 +34,7 @@ const char * PATH_CONFIG_FILE = "/home/debian/Desktop/config_file.txt";
 *	 G L O B A L   V A R I A B L E S  	   *
 ********************************************/
 
-//TODO, Switch XML FIlE
+//TODO, Switch XML FILE
 /*******************************************
 *	        F U N C T I O N S   	       *
 ********************************************/

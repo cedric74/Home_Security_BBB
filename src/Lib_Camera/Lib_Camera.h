@@ -22,6 +22,8 @@
 /*******************************************
 *               D E F I N E                *
 ********************************************/
+#define MOTION_ON	1
+#define MOTION_OFF	0
 
 /*******************************************
 *   T Y P E D E F   &  C O N S T A N T E   *
@@ -38,5 +40,10 @@ void	Start_Thread_Pic();
 void * 	ThreadPic();
 void 	Take_Picture();
 void 	Save_Pic();
+void 	Start_Thread_Control_Motion(void);
+void	Lib_Cam_Active_Motion();
+void	Lib_Cam_Deactivate_Motion();
+
+
 
 #endif /* LIB_CAMERA_H_ */

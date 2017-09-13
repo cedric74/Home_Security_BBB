@@ -28,9 +28,12 @@ const char * alertFile 		 = "/home/debian/Desktop/AlertFile.txt";
 const int HourTimeDay 	= 20;
 const int MinTimeDay 	= 00;
 
+const int TIME_DELAYS_ALERT = 900; // 60s *15 = 15 minnutes
+
 /*******************************************
 *	 G L O B A L   V A R I A B L E S  	   *
 ********************************************/
+volatile unsigned char u8DelaysAlert = FALSE;
 
 /*******************************************
 *	      L O C A L  F U N C T I O N S      *
@@ -43,6 +46,46 @@ static int sendSMS();
 /*******************************************
 *	        F U N C T I O N S   	       *
 ********************************************/
+
+/*
+ ============================================
+ Function     : Thread DelaysNextAlert()
+ Parameter    :
+ Return Value : void
+ Description  :
+ ============================================
+ */
+void * DelaysNextAlert()
+{
+	// Declarations Variables
+	int old_cancel_state;
+
+	// Instructions
+
+	// Start Section critic
+	pthread_setcancelstate (PTHREAD_CANCEL_DISABLE, &old_cancel_state);
+
+	// Reset Flag Detection
+	u8DelaysAlert = TRUE;
+
+	// End Section critic
+	pthread_setcancelstate (old_cancel_state, NULL);
+
+	// Sleep
+	sleep(TIME_DELAYS_ALERT);
+
+	// Start Section critic
+	pthread_setcancelstate (PTHREAD_CANCEL_DISABLE, &old_cancel_state);
+
+	// Reset Flag Detection
+	u8DelaysAlert = FALSE;
+
+	// End Section critic
+	pthread_setcancelstate (old_cancel_state, NULL);
+
+	return NULL;
+}
+
 
 /*
  ============================================
@@ -171,6 +214,7 @@ void File_Log(char string[50], int iLength){
  Description  :
  ============================================
  */
+/*
 int Ping_Phone(){
 
 	// Declarations Variables
@@ -189,7 +233,8 @@ int Ping_Phone(){
 	}
 
 	return iValue;
-}
+
+}*/
 
 /*
  ============================================
@@ -237,18 +282,24 @@ int send_Alert(int iSmsok, char strCaptor[5]){
 	// Create Alert File
 	CreateAlertFile(strCaptor);
 
-	// Send Alert File by Email
-	SendAlertFile();
+	// Test Delays Next Alert Variables
+	if(u8DelaysAlert == FALSE){
+		// Send Alert File by Email
+		SendAlertFile();
 
-	// Send Alert by SMS
-	if(iSmsok == SMS_OK){
-	iVal = sendSMS();
-		if( iVal == ERROR){
-			File_Log("PROBLEM_SEND_ALERT, ", 20);
-			File_Log("FAILED_SEND_SMS, ", 17);
-			return ERROR;
+		// Send Alert by SMS
+		if(iSmsok == SMS_OK){
+		iVal = sendSMS();
+			if( iVal == ERROR){
+				File_Log("PROBLEM_SEND_ALERT, ", 20);
+				File_Log("FAILED_SEND_SMS, ", 17);
+				return ERROR;
+			}
+			File_Log("Send SMS, ", 13);
 		}
-		File_Log("Send SMS, ", 13);
+
+		// Launch Delays Next Alert Thread
+		DelaysNextAlert();
 	}
 
 	return OK;
@@ -269,6 +320,7 @@ static int sendSMS(){
 		snprintf(buffer , 200, "ssmtp -s \"ALERT Email\" ");
 		strcat(buffer,tabUser[MAIN_USER+1].sNumPhone);
 		strcat(buffer,"@sms.fido.ca");
+		printf("Test: %s", buffer);
 		int iReturn =system(buffer);
 		if(iReturn == ERROR){
 			//perror("Failed to invoke mpack");
@@ -324,6 +376,7 @@ static void CreateAlertFile(char cDoor[5]){
  */
 static void SendAlertFile(){
 	int iLoop ;
+
 	for( iLoop = 0 ; iLoop < u8NbUSer; iLoop++){
 		char buffer[200];
 		snprintf(buffer , 200, "mpack -s \"Alert Home Security System\" /home/debian/Desktop/AlertFile.txt ");

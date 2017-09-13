@@ -28,6 +28,9 @@
 #define PORT_FILE	51223
 
 #define ERROR_SOCKET	-1
+
+#define CLIENT_SOCKET	0
+#define SERVER_SOCKET	1
 /*******************************************
 *   T Y P E D E F   &  C O N S T A N T E   *			
 ********************************************/
@@ -48,4 +51,13 @@ void 			send_binary(int  newsockfd, const char *file_name);
 
 void 			close_socket(int sockfd, int newsockfd);
 void 			error(const char *msg);
+
+
+void Socket_Com_Close(int iSocket);
+int Socket_Com_Create_Udp(unsigned char u8Type, unsigned char bDirection, const char* pHostAddress, int iPort, struct sockaddr_in *pServ_Adrr);
+int Socket_Com_Receive_Udp(int iSock, char * pMsg, int iSize);
+int  Socket_Com_Send_Udp(int iSock, char * pMsg, int iSize, struct sockaddr_in *pServ_Adrr);
+
+
+
 

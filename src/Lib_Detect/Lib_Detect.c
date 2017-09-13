@@ -183,6 +183,9 @@ void Read_Interrupter(){
 					// Sound System ON
 					Start_Thread_Warning();
 
+					// Camera Motion Activate
+					Lib_Cam_Active_Motion();
+
 					printf(" System ON, INTERRUPTER \n");
 					File_Log("System switch to ON, ", 21);
 
@@ -204,6 +207,9 @@ void Read_Interrupter(){
 			if( readEntry == OFF_INTERRUPT){
 				iCountInter++;
 				if( iCountInter >= COUNT_INTERRUPTER){
+
+					// Camera Motion Activate
+					Lib_Cam_Deactivate_Motion();
 
 					printf(" System OFF, INTERRUPTER \n");
 					File_Log("System switch to OFF, ", 22);
@@ -329,5 +335,8 @@ void Init_Lib_Detect(){
 
 	// Thread Execute Send Daily Report
 	pthread_create (&thread_id_Daily, NULL, &Thread_DailyReport, NULL);
+
+	// Thread Execute Camera Motion Detection
+	Start_Thread_Control_Motion();
 
 }
