@@ -73,8 +73,7 @@ void Init(){
 	watch_dog_start();
 
 	// Load Config File
-	int iRet =Lib_Config_Load();
-	if(iRet == ERROR){
+	if(Lib_Config_Load() == ERROR){
 		printf(" Error Load Configuration File\n");
 		exit(0);
 	}
