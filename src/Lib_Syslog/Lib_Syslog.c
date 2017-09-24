@@ -24,19 +24,18 @@ const int MinTimeDay 	= 00;
 
 #define WAIT_1_MIN		60		// In Second
 
-const char * dailyReportFile = "/home/debian/Desktop/dailyReportFile.txt";
+const char * FILE_SYSLOG = "/home/debian/Desktop/daily_Syslog.txt";
 
 /*******************************************
 *	 G L O B A L   V A R I A B L E S  	   *
 ********************************************/
-FILE * 		fpLog;
 pthread_t 	thread_id_syslog;
 
 /*******************************************
 *	      L O C A L  F U N C T I O N S      *
 ********************************************/
 void * 			Thread_Send_Daily_Syslog();
-static int 		CheckTime(void);
+static int 		Check_Time_Send_Syslog(void);
 static void 	Send_Syslog_By_Mail();
 
 /*******************************************
@@ -71,7 +70,7 @@ void * Thread_Send_Daily_Syslog(){
 	while(1){
 		sleep(WAIT_1_MIN);
 
-		if(CheckTime() == TRUE){
+		if(Check_Time_Send_Syslog() == TRUE){
 			if( Internet_Connection_Status() == FALSE){
 				Syslog_Message("PROBLEM_SEND_DAILY RAPPORT, ", 28);
 				Syslog_Message("NO_CONNECTION, ", 15);
@@ -89,13 +88,13 @@ void * Thread_Send_Daily_Syslog(){
 
 /*
  ============================================
- Function     : CheckTime()
+ Function     : Check_Time_Send_Syslog()
  Parameter    :
  Return Value : void
  Description  :
  ============================================
  */
-static int CheckTime(void){
+static int Check_Time_Send_Syslog(void){
 
 	// Declarations Variables
 	time_t rawtime;
@@ -148,18 +147,32 @@ static void Send_Syslog_By_Mail(){
  */
 void Syslog_Message(char string[50], int iLength){
 
-	// Instructions
-	fpLog = fopen ( dailyReportFile, "a");
-
+	// Declarations Variables
+	FILE * 	fp_syslogLog;
 	time_t rawtime;
 	struct tm * timeinfo;
 
+	// Instructions
+
+	// Open file, Append Mode
+	fp_syslogLog = fopen ( FILE_SYSLOG, "a");
+	if(fp_syslogLog == NULL)
+	{
+		printf("Can't open file '%s,", FILE_SYSLOG);
+		return;
+	}
+
+	// Get time
 	time ( &rawtime );
 	timeinfo = localtime ( &rawtime );
-	fwrite(string , 1 , iLength , fpLog );
-	fwrite(asctime (timeinfo) , 1 , 25 , fpLog );
 
-	fclose(fpLog);
+	// Write line into the file
+	fwrite(string , 1 , iLength , fp_syslogLog );
+	fwrite(asctime (timeinfo) , 1 , sizeof(timeinfo) , fp_syslogLog );
+
+	// Close file
+	fclose(fp_syslogLog);
+
 }
 
 
@@ -174,6 +187,6 @@ void Syslog_Message(char string[50], int iLength){
 void Send_Syslog_To_Supervisor(){
 	int socketFile 	= create_Socket(PORT_FILE);
 	int newSockFile = accept_client_connection(socketFile);
-	send_binary(newSockFile, dailyReportFile);
+	send_binary(newSockFile, FILE_SYSLOG);
 	close_socket(socketFile, newSockFile);
 }
