@@ -94,6 +94,6 @@ void Init(){
 	Init_State_Machine();
 
 	// Create File Log With Version
-	Syslog_Message(START_FILE, SIZE_STRING);
+	Syslog_Message(START_FILE);
 
 }

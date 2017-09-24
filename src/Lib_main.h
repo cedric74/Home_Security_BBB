@@ -31,9 +31,6 @@
 ********************************************/
 #define START_FILE			"V2.00, DEBUG, 24 Sep,   "
 
-#define SIZE_STRING			23
-
-#define DEBUG				1
 
 /*******************************************
 *   T Y P E D E F   &  C O N S T A N T E   *

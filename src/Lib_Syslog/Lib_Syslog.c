@@ -72,8 +72,8 @@ void * Thread_Send_Daily_Syslog(){
 
 		if(Check_Time_Send_Syslog() == TRUE){
 			if( Internet_Connection_Status() == FALSE){
-				Syslog_Message("PROBLEM_SEND_DAILY RAPPORT, ", 28);
-				Syslog_Message("NO_CONNECTION, ", 15);
+				Syslog_Message("PROBLEM_SEND_DAILY RAPPORT, ");
+				Syslog_Message("NO_CONNECTION, ");
 			}else{
 				Send_Syslog_By_Mail();
 			}
@@ -133,7 +133,7 @@ static void Send_Syslog_By_Mail(){
     	system("rm /home/debian/Desktop/dailyReportFile.txt");
 
     	// Create File Log With Version
-    	Syslog_Message(START_FILE, SIZE_STRING);
+    	Syslog_Message(START_FILE);
      }
 }
 
@@ -145,13 +145,14 @@ static void Send_Syslog_By_Mail(){
  Description  :
  ============================================
  */
-void Syslog_Message(char string[50], int iLength){
+void Syslog_Message(char *message)
+{
 
 	// Declarations Variables
 	FILE * 	fp_syslogLog;
 	time_t rawtime;
 	struct tm * timeinfo;
-
+	int iLength_message = 0;
 	// Instructions
 
 	// Open file, Append Mode
@@ -167,8 +168,12 @@ void Syslog_Message(char string[50], int iLength){
 	timeinfo = localtime ( &rawtime );
 
 	// Write line into the file
-	fwrite(string , 1 , iLength , fp_syslogLog );
-	fwrite(asctime (timeinfo) , 1 , sizeof(timeinfo) , fp_syslogLog );
+	iLength_message =  strlen(message);
+	fwrite(message, 1, iLength_message, fp_syslogLog);
+
+	// Add Timestamp inot the file
+	fwrite(asctime (timeinfo) , 1 , strlen(asctime (timeinfo)), fp_syslogLog);
+
 
 	// Close file
 	fclose(fp_syslogLog);

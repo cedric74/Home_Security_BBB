@@ -125,8 +125,8 @@ int send_Alert(int iSmsok, char strCaptor[5]){
 
 	// Instructions
 	if( Internet_Connection_Status() == FALSE){
-		Syslog_Message("PROBLEM_SEND_ALERT, ", 20);
-		Syslog_Message("NO_CONNECTION, ", 15);
+		Syslog_Message("PROBLEM_SEND_ALERT, ");
+		Syslog_Message("NO_CONNECTION, ");
 
 		printf("PROBLEM_SEND_ALERT/n");
 		return ERROR;
@@ -145,11 +145,11 @@ int send_Alert(int iSmsok, char strCaptor[5]){
 		if(iSmsok == SMS_OK){
 		iVal = sendSMS();
 			if( iVal == ERROR){
-				Syslog_Message("PROBLEM_SEND_ALERT, ", 20);
-				Syslog_Message("FAILED_SEND_SMS, ", 17);
+				Syslog_Message("PROBLEM_SEND_ALERT, ");
+				Syslog_Message("FAILED_SEND_SMS, ");
 				return ERROR;
 			}
-			Syslog_Message("Send SMS, ", 10);
+			Syslog_Message("Send SMS, ");
 		}
 
 		// Launch Delays Next Alert Thread
