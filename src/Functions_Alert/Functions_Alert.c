@@ -295,7 +295,7 @@ int send_Alert(int iSmsok, char strCaptor[5]){
 				File_Log("FAILED_SEND_SMS, ", 17);
 				return ERROR;
 			}
-			File_Log("Send SMS, ", 13);
+			File_Log("Send SMS, ", 10);
 		}
 
 		// Launch Delays Next Alert Thread
