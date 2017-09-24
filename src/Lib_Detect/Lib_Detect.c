@@ -51,9 +51,9 @@ void main_Detect(){
 
 		// Add info in Daily Report
 		if(u8DetectOn == ptrCaptorMainDoor->ePinCaptor){
-			File_Log("Detect OK, Main Door, ", 22);
+			Syslog_Message("Detect OK, Main Door, ", 22);
 		}else{
-			File_Log("Detect OK, Back Door, ", 22);
+			Syslog_Message("Detect OK, Back Door, ", 22);
 		}
 
 		// Ping_Phone
@@ -88,14 +88,14 @@ void main_Detect(){
 			if(iSystemOn == OFF){
 				// Disable System
 				printf(" System OFF \n");
-				File_Log("System OFF, ", 12);
+				Syslog_Message("System OFF, ", 12);
 			}else{
 				// Alert OK
 				printf(" Alert OK \n");
 
 				// Siren ON.
 				printf(" Siren ON. \n");
-				File_Log("Siren  ON , ", 12);
+				Syslog_Message("Siren  ON , ", 12);
 				Start_Siren();
 
 				// Send Alert By Mail & Sms
@@ -109,7 +109,7 @@ void main_Detect(){
 
 		}else{
 			printf(" System OFF \n");
-			File_Log("System OFF, ", 12);
+			Syslog_Message("System OFF, ", 12);
 		}
 
 		// Print
@@ -187,7 +187,7 @@ void Read_Interrupter(){
 					Lib_Cam_Active_Motion();
 
 					printf(" System ON, INTERRUPTER \n");
-					File_Log("System switch to ON, ", 21);
+					Syslog_Message("System switch to ON, ", 21);
 
 					// Change State
 					stateInterrupter = STATE_ON ;
@@ -212,7 +212,7 @@ void Read_Interrupter(){
 					Lib_Cam_Deactivate_Motion();
 
 					printf(" System OFF, INTERRUPTER \n");
-					File_Log("System switch to OFF, ", 22);
+					Syslog_Message("System switch to OFF, ", 22);
 
 					// Change State
 					stateInterrupter = STATE_OFF ;
@@ -332,9 +332,6 @@ void Init_Lib_Detect(){
 
 	// Thread Execute Read Captor
 	pthread_create (&thread_id, NULL, &Thread_Read_Input, NULL);
-
-	// Thread Execute Send Daily Report
-	pthread_create (&thread_id_Daily, NULL, &Thread_DailyReport, NULL);
 
 	// Thread Execute Camera Motion Detection
 	Start_Thread_Control_Motion();

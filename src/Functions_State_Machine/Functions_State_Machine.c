@@ -169,8 +169,8 @@ unsigned char state_machine(void){
 		break;
 
 		case REPORT_FILE_CMD:
-			printf( " REPORT FILE CMD \n");
-			Report_File_To_Supervisor();
+			printf( " SYSLOG FILE CMD \n");
+			Send_Syslog_To_Supervisor();
 		break;
 
 		case TEST_CAPTOR:

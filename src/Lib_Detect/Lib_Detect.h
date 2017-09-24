@@ -27,6 +27,7 @@
 #include "../Functions_Alert/Functions_Alert.h"
 #include "../Lib_Siren/Lib_Siren.h"
 #include "../Lib_Camera/Lib_Camera.h"
+#include "../Lib_Syslog/Lib_Syslog.h"
 #include "../Lib_main.h"
 
 /*******************************************

@@ -50,18 +50,11 @@
 *	 G L O B A L   V A R I A B L E S  	   *
 ********************************************/
 int 		isystemON;
-FILE * 		fpLog;
-pthread_t 	thread_id_Daily;
 
 /*******************************************
 *	        F U N C T I O N S   	       *
 ********************************************/
-void 	Report_File_To_Supervisor();
-void * 	Thread_DailyReport();
-void 	Send_Report_File_Log();
-void 	File_Log(char * string, int iLength);
 int 	Ping_Phone();
-int 	Connection_OK();
 int 	send_Alert(int iSmsok, char strCaptor[5]);
 int 	sendEmail(char strCaptor[5]);
 

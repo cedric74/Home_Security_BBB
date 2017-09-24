@@ -79,8 +79,8 @@ void Init(){
 		exit(0);
 	}
 
-	// Create File Log With Version
-	File_Log(START_FILE, SIZE_STRING);
+	// Init Syslog lib
+	Init_Syslog();
 
 	// Init Gpio Lib
 	beh_BBB_gpio_init();
@@ -93,5 +93,8 @@ void Init(){
 
 	// Init State Machine
 	Init_State_Machine();
+
+	// Create File Log With Version
+	Syslog_Message(START_FILE, SIZE_STRING);
 
 }
