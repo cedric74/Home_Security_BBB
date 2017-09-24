@@ -122,15 +122,27 @@ static int Check_Time_Send_Syslog(void){
  ============================================
  */
 static void Send_Syslog_By_Mail(){
-	char buffer[200];
-	snprintf(buffer , 200, "mpack -s \"Daily Report\" /home/debian/Desktop/dailyReportFile.txt ");
-	strcat(buffer,tabUser[MAIN_USER].sAddress);
-	int iReturn =system(buffer);
+	// Declaration Variables
+	char buffer[200]= {0};
 
+	// Instructions
+
+	// Create mpack command
+	snprintf(buffer , 200, "mpack -s \"Daily SysLog\" %s ", FILE_SYSLOG);
+
+	// Get address mail from config file
+	strcat(buffer,tabUser[MAIN_USER].sAddress);
+	printf("DEBUG, command mapck : %s \n", buffer);
+
+	// Execute command
+	int iReturn = system(buffer);
 	if(iReturn == ERROR){
-    	 //perror("Failed to invoke mpack");
+		Syslog_Message("ERROR, Can't execute mpack command");
     }else{
-    	system("rm /home/debian/Desktop/dailyReportFile.txt");
+    	// Removed File
+    	memset(buffer, 0, 200);
+    	snprintf(buffer , 200, "rm %s", FILE_SYSLOG);
+       	system(buffer);
 
     	// Create File Log With Version
     	Syslog_Message(START_FILE);
